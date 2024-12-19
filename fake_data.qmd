@@ -1,0 +1,62 @@
+---
+title: "Fake Data"
+format: html
+editor: visual
+---
+
+# Import data & Libraries
+
+```{r,  warning=FALSE, message=FALSE}
+library(tidyverse)
+library(readxl)
+
+raw <- read_excel(here::here("data\\NSC Enrollment Lost Fa16_Sp24 20240916.xlsx"))
+
+```
+
+# Clean Variables
+
+```{r}
+raw$`Class Level` <- factor(raw$`Class Level Code`, 
+                            labels = c( "Associate's",
+                                        "Bachelor's (Undergraduate)",
+                                        "Certificate (Undergraduate)",
+                                        "Doctoral (Graduate)",
+                                        "Freshman (Undergraduate)",
+                                        "Unspecified (Graduate/Professional)",
+                                        "Junior (Undergraduate)",
+                                        "First Professional (Graduate)",
+                                        "Master’s (Graduate)",
+                                        "Unspecified (Undergraduate)",
+                                        "Senior (Undergraduate)",
+                                        "Sophomore (Undergraduate)",
+                                        "Post Baccalaureate Certificate"))
+
+```
+
+# Fake Data
+
+```{r}
+n <- 2000
+
+possible.ids <- expand.grid(LETTERS, letters) |> mutate(id= paste0(Var1, Var2))
+
+simulated.data <- data.frame(
+  `Class Level` = sample(raw$`Class Level`, n, replace = TRUE),
+  `College Name` = sample(raw$`College Name`, n, replace = TRUE),
+  `College Sequence` = sample(raw$`College Sequence`, n, replace = TRUE),
+  `TO College Year` = sample(raw$`TO College Year`, n, replace = TRUE),
+  `LE College Year` = sample(raw$`TO College Year`, n, replace = TRUE),
+  `Dim Persn Stdnt Skey` = sample(possible.ids$id, n, replace = TRUE)
+)
+
+```
+
+# Export Cleaned Data Set
+
+```{r}
+fake_nsc <- simulated.data
+
+save(fake_nsc, file = here::here("data\\nsc.fake.Rdata"))
+
+```
